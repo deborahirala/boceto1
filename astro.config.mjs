@@ -2,4 +2,9 @@
 import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
-export default defineConfig({});
+// Configurado para publicar en GitHub Pages:
+//   https://deborahirala.github.io/boceto1
+export default defineConfig({
+  site: 'https://deborahirala.github.io',
+  base: '/boceto1',
+});
