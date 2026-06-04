@@ -1,16 +1,17 @@
-# 🎮 Portafolio Arcade
+# ✏️ Portafolio — Cuaderno de bocetos animado
 
-Portafolio personal con estética de videojuego para presentar proyectos y
-automatizaciones. Hecho con [Astro](https://astro.build) + [GSAP](https://gsap.com).
+Portafolio personal con estética **dibujada a mano / boceto** y animaciones
+dinámicas para presentar proyectos y automatizaciones. Hecho con
+[Astro](https://astro.build) + [GSAP](https://gsap.com).
 
 ## ✨ Qué incluye
 
-- Pantalla de carga estilo arcade ("LOADING / PRESS START")
-- Cursor personalizado y fondo de partículas conectadas
-- Título con efecto _glitch_ y grilla neón animada
-- Sección de "perfil de jugador" con barras de stats
-- Proyectos como un menú de **SELECCIONAR MISIÓN** (con categorías y dificultad)
-- Animaciones al hacer scroll
+- Pantalla de carga donde un lápiz **dibuja** una línea
+- Fondo de papel de cuaderno, tipografía manuscrita y trazos imperfectos
+- Efecto "**hervido**" (_boil_): las líneas vibran como animación hecha a mano
+- Garabatos (estrellas, flechas, espirales) que **se dibujan solos** al hacer scroll
+- "Ficha" de habilidades con barras dibujadas a mano
+- Proyectos como tarjetas tipo polaroid con cinta, que se enderezan al pasar el mouse
 - Responsive (se adapta al celular)
 
 ## ✏️ Cómo edito mi contenido

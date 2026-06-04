@@ -1,123 +1,86 @@
 /* ===========================================================================
-   PORTAFOLIO ARCADE — estilos globales
+   PORTAFOLIO — Cuaderno de bocetos animado (hand-drawn / sketch)
    =========================================================================== */
 
 :root {
-  --bg: #07070f;
-  --bg-2: #0c0c1c;
-  --panel: rgba(18, 18, 38, 0.6);
-  --cyan: #00f0ff;
-  --magenta: #ff2e88;
-  --green: #39ff14;
-  --yellow: #ffd23f;
-  --purple: #9d4edd;
-  --text: #e7e9ff;
-  --text-dim: #8b8fb3;
-  --grid: rgba(0, 240, 255, 0.07);
-  --font-pixel: "Press Start 2P", monospace;
-  --font-body: "Rajdhani", "Segoe UI", sans-serif;
+  --paper: #f6f1e4;
+  --paper-2: #efe7d3;
+  --ink: #2c2a26;
+  --ink-soft: #6b675c;
+  --red: #ef5a3c;
+  --yellow: #f3b32b;
+  --teal: #1fb3a3;
+  --blue: #3f7cff;
+  --line: rgba(44, 42, 38, 0.10);
+  --font-hand: "Shantell Sans", "Comic Sans MS", cursive;
+  --font-note: "Gloria Hallelujah", cursive;
+  --font-scribble: "Rubik Scribble", "Shantell Sans", cursive;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-body);
-  font-size: 18px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-hand);
+  font-size: 19px;
   line-height: 1.6;
   overflow-x: hidden;
   cursor: none;
   position: relative;
 }
 
-/* Grilla de fondo animada estilo "arcade floor" */
+/* Papel de cuaderno: grilla tenue + textura de grano */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background-image:
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
   z-index: 0;
-  animation: gridmove 8s linear infinite;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 28px 28px;
 }
-@keyframes gridmove {
-  from { background-position: 0 0, 0 0; }
-  to   { background-position: 40px 40px, 40px 40px; }
-}
-
-/* Viñeta / scanlines tipo CRT */
+/* Grano sutil de papel */
 body::after {
   content: "";
   position: fixed;
   inset: 0;
+  z-index: 0;
   pointer-events: none;
-  z-index: 9998;
-  background: repeating-linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0) 0,
-    rgba(0, 0, 0, 0) 2px,
-    rgba(0, 0, 0, 0.12) 3px
-  );
-  mix-blend-mode: multiply;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
 }
 
 a { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }
 ul { list-style: none; }
 
-h1, h2, h3 {
-  font-family: var(--font-pixel);
-  line-height: 1.4;
-  letter-spacing: 1px;
+h1, h2, h3 { font-family: var(--font-hand); font-weight: 700; line-height: 1.15; }
+
+.container { width: min(1150px, 92vw); margin: 0 auto; }
+section { position: relative; z-index: 1; padding: 100px 0; }
+
+/* ---- Efecto "hervido" (boil): el dibujo vibra como hecho a mano ---- */
+.sketchy { filter: url(#sk1); }
+@media (prefers-reduced-motion: no-preference) {
+  .boil { animation: boil 0.85s steps(1, end) infinite; }
+}
+@keyframes boil {
+  0%   { filter: url(#sk1); }
+  33%  { filter: url(#sk2); }
+  66%  { filter: url(#sk3); }
+  100% { filter: url(#sk1); }
 }
 
-.container {
-  width: min(1200px, 92vw);
-  margin: 0 auto;
-}
-
-section {
+/* ---- Caja dibujada a mano (bordes irregulares) ---- */
+.sketch-box {
+  border: 2.5px solid var(--ink);
+  border-radius: 255px 14px 225px 16px / 16px 225px 18px 255px;
+  background: var(--paper);
   position: relative;
-  z-index: 1;
-  padding: 110px 0;
-}
-
-/* ---- Cursor personalizado ---- */
-.cursor-dot,
-.cursor-ring {
-  position: fixed;
-  top: 0; left: 0;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 10000;
-  transform: translate(-50%, -50%);
-  mix-blend-mode: difference;
-}
-.cursor-dot {
-  width: 8px; height: 8px;
-  background: var(--cyan);
-}
-.cursor-ring {
-  width: 34px; height: 34px;
-  border: 2px solid var(--cyan);
-  transition: width .2s, height .2s, background .2s, border-color .2s;
-}
-.cursor-ring.hover {
-  width: 54px; height: 54px;
-  background: rgba(0, 240, 255, 0.15);
-  border-color: var(--magenta);
 }
 
 /* ---- Botones ---- */
@@ -125,100 +88,68 @@ section {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-family: var(--font-pixel);
-  font-size: 12px;
-  padding: 16px 26px;
-  border: 2px solid var(--cyan);
-  color: var(--cyan);
-  background: transparent;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 19px;
+  padding: 12px 26px;
+  border: 2.5px solid var(--ink);
+  border-radius: 240px 18px 220px 18px / 18px 220px 18px 240px;
+  color: var(--ink);
+  background: var(--yellow);
   cursor: none;
-  position: relative;
-  overflow: hidden;
-  transition: color .25s, transform .15s;
-  text-transform: uppercase;
+  transition: transform .15s ease, background .2s;
+  box-shadow: 3px 3px 0 var(--ink);
+  transform: rotate(-1.2deg);
 }
-.btn::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: var(--cyan);
-  transform: translateY(101%);
-  transition: transform .25s ease;
-  z-index: -1;
-}
-.btn:hover { color: var(--bg); transform: translateY(-3px); }
-.btn:hover::before { transform: translateY(0); }
-.btn.magenta { border-color: var(--magenta); color: var(--magenta); }
-.btn.magenta::before { background: var(--magenta); }
-.btn.magenta:hover { color: var(--bg); }
+.btn:hover { transform: rotate(1deg) translateY(-2px) scale(1.03); }
+.btn:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--ink); }
+.btn.red { background: var(--red); color: var(--paper); }
+.btn.teal { background: var(--teal); color: var(--paper); }
 
 /* ---- Títulos de sección ---- */
-.section-head {
-  margin-bottom: 60px;
-  text-align: center;
-}
+.section-head { margin-bottom: 56px; text-align: center; }
 .section-head .eyebrow {
-  font-family: var(--font-pixel);
-  font-size: 11px;
-  color: var(--magenta);
-  letter-spacing: 3px;
-  display: block;
-  margin-bottom: 18px;
+  font-family: var(--font-note);
+  font-size: 15px;
+  color: var(--red);
+  display: inline-block;
+  transform: rotate(-2deg);
+  margin-bottom: 8px;
 }
-.section-head h2 {
-  font-size: clamp(20px, 4vw, 34px);
-  color: var(--text);
-  text-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
-}
+.section-head h2 { font-size: clamp(34px, 6vw, 60px); }
 
-/* ---- Animación de aparición (controlada por GSAP, fallback CSS) ---- */
-.reveal { opacity: 0; transform: translateY(40px); }
+/* Subrayado dibujado a mano (svg) */
+.underline-doodle { display: block; width: 220px; max-width: 60%; margin: 6px auto 0; }
+.underline-doodle path { fill: none; stroke: var(--red); stroke-width: 4; stroke-linecap: round; }
 
-/* ---- Glitch ---- */
-.glitch {
-  position: relative;
-  color: var(--text);
+/* ---- Reveal (lo controla GSAP) ---- */
+.reveal { opacity: 0; transform: translateY(34px) rotate(-1deg); }
+
+/* ---- Cursor (lápiz/tinta) ---- */
+.cursor-dot, .cursor-ring {
+  position: fixed; top: 0; left: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
 }
-.glitch::before,
-.glitch::after {
-  content: attr(data-text);
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
+.cursor-dot { width: 9px; height: 9px; background: var(--ink); }
+.cursor-ring {
+  width: 30px; height: 30px;
+  border: 2.5px solid var(--ink);
+  transition: width .2s, height .2s, background .2s;
 }
-.glitch::before {
-  color: var(--magenta);
-  animation: glitch-1 2.5s infinite linear alternate-reverse;
-  clip-path: inset(0 0 60% 0);
-}
-.glitch::after {
-  color: var(--cyan);
-  animation: glitch-2 2s infinite linear alternate-reverse;
-  clip-path: inset(60% 0 0 0);
-}
-@keyframes glitch-1 {
-  0%, 100% { transform: translate(0); }
-  20% { transform: translate(-3px, 1px); }
-  40% { transform: translate(2px, -1px); }
-  60% { transform: translate(-2px, 2px); }
-}
-@keyframes glitch-2 {
-  0%, 100% { transform: translate(0); }
-  25% { transform: translate(2px, -1px); }
-  50% { transform: translate(-3px, 1px); }
-  75% { transform: translate(1px, 2px); }
-}
+.cursor-ring.hover { width: 50px; height: 50px; background: rgba(243, 179, 43, 0.35); }
+
+/* ---- Doodles flotantes de fondo ---- */
+.floaty { position: absolute; z-index: 0; opacity: 0.8; pointer-events: none; }
 
 @media (max-width: 720px) {
-  body { font-size: 16px; cursor: auto; }
+  body { font-size: 18px; cursor: auto; }
   .cursor-dot, .cursor-ring { display: none; }
-  section { padding: 70px 0; }
+  section { padding: 64px 0; }
 }
-
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation: none !important;
-    transition: none !important;
-  }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
   .reveal { opacity: 1; transform: none; }
 }
