@@ -1,0 +1,209 @@
+---
+import "../styles/global.css";
+const { title = "Portafolio" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Portafolio de automatizaciones y proyectos." />
+    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}/favicon.svg`} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
+  </head>
+  <body>
+    <!-- Pantalla de carga estilo arcade -->
+    <div id="loader">
+      <div class="loader-inner">
+        <p class="loader-title glitch" data-text="LOADING">LOADING</p>
+        <div class="loader-bar"><span id="loader-fill"></span></div>
+        <p class="loader-press">PRESS START</p>
+      </div>
+    </div>
+
+    <!-- Cursor personalizado -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+
+    <!-- Fondo de partículas -->
+    <canvas id="particles"></canvas>
+
+    <slot />
+
+    <style>
+      /* ---- Loader ---- */
+      #loader {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: var(--bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.6s ease, visibility 0.6s ease;
+      }
+      #loader.done { opacity: 0; visibility: hidden; }
+      .loader-inner { text-align: center; width: min(420px, 80vw); }
+      .loader-title { font-family: var(--font-pixel); font-size: 26px; }
+      .loader-bar {
+        margin: 28px 0 18px;
+        height: 16px;
+        border: 2px solid var(--cyan);
+        padding: 2px;
+      }
+      #loader-fill {
+        display: block;
+        height: 100%;
+        width: 0%;
+        background: var(--cyan);
+        box-shadow: 0 0 14px var(--cyan);
+      }
+      .loader-press {
+        font-family: var(--font-pixel);
+        font-size: 11px;
+        color: var(--magenta);
+        animation: blink 1s steps(2) infinite;
+      }
+      @keyframes blink { 50% { opacity: 0; } }
+
+      /* ---- Canvas partículas ---- */
+      #particles {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+      }
+    </style>
+
+    <!-- GSAP -->
+    <script>
+      import { gsap } from "gsap";
+      import { ScrollTrigger } from "gsap/ScrollTrigger";
+      gsap.registerPlugin(ScrollTrigger);
+
+      /* ============ LOADER ============ */
+      const loader = document.getElementById("loader");
+      const fill = document.getElementById("loader-fill");
+      let pct = 0;
+      const tick = setInterval(() => {
+        pct = Math.min(100, pct + Math.random() * 18);
+        if (fill) fill.style.width = pct + "%";
+        if (pct >= 100) {
+          clearInterval(tick);
+          setTimeout(() => {
+            loader?.classList.add("done");
+            startReveals();
+          }, 350);
+        }
+      }, 120);
+
+      /* ============ CURSOR ============ */
+      const dot = document.querySelector(".cursor-dot");
+      const ring = document.querySelector(".cursor-ring");
+      let mx = 0, my = 0, rx = 0, ry = 0;
+      window.addEventListener("mousemove", (e) => {
+        mx = e.clientX; my = e.clientY;
+        if (dot) { dot.style.left = mx + "px"; dot.style.top = my + "px"; }
+      });
+      function followRing() {
+        rx += (mx - rx) * 0.18;
+        ry += (my - ry) * 0.18;
+        if (ring) { ring.style.left = rx + "px"; ring.style.top = ry + "px"; }
+        requestAnimationFrame(followRing);
+      }
+      followRing();
+      document.querySelectorAll("a, button, .btn, .project-card").forEach((el) => {
+        el.addEventListener("mouseenter", () => ring?.classList.add("hover"));
+        el.addEventListener("mouseleave", () => ring?.classList.remove("hover"));
+      });
+
+      /* ============ PARTÍCULAS ============ */
+      const canvas = document.getElementById("particles");
+      const ctx = canvas.getContext("2d");
+      let particles = [];
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener("resize", resize);
+      const COLORS = ["#00f0ff", "#ff2e88", "#39ff14", "#9d4edd"];
+      function makeParticles() {
+        const count = Math.min(70, Math.floor(window.innerWidth / 22));
+        particles = Array.from({ length: count }, () => ({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          r: Math.random() * 2 + 0.6,
+          c: COLORS[Math.floor(Math.random() * COLORS.length)],
+        }));
+      }
+      makeParticles();
+      function drawParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (const p of particles) {
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+          if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = p.c;
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = p.c;
+          ctx.fill();
+        }
+        // líneas entre partículas cercanas
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const a = particles[i], b = particles[j];
+            const d = Math.hypot(a.x - b.x, a.y - b.y);
+            if (d < 120) {
+              ctx.beginPath();
+              ctx.moveTo(a.x, a.y);
+              ctx.lineTo(b.x, b.y);
+              ctx.strokeStyle = `rgba(0,240,255,${0.12 * (1 - d / 120)})`;
+              ctx.lineWidth = 1;
+              ctx.shadowBlur = 0;
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(drawParticles);
+      }
+      drawParticles();
+
+      /* ============ REVEALS CON SCROLL ============ */
+      function startReveals() {
+        gsap.utils.toArray(".reveal").forEach((el) => {
+          gsap.to(el, {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power3.out",
+            scrollTrigger: { trigger: el, start: "top 85%" },
+          });
+        });
+        // barras de stats
+        gsap.utils.toArray(".stat-fill").forEach((el) => {
+          const v = el.getAttribute("data-value");
+          gsap.to(el, {
+            width: v + "%",
+            duration: 1.2,
+            ease: "power2.out",
+            scrollTrigger: { trigger: el, start: "top 90%" },
+          });
+        });
+      }
+      // fallback por si el loader tarda
+      window.addEventListener("load", () => setTimeout(startReveals, 2500));
+    </script>
+  </body>
+</html>
